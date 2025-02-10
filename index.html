@@ -4,93 +4,269 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-    <title>转化github脚本为github代理的方式</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+    <title>GitHub Proxy 转换工具</title>
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --card-gradient: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e5e7ff 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
         .container {
             max-width: 800px;
-            margin: 2rem auto;
+            margin: 0 auto;
         }
-        .card {
+
+        .page-title {
+            text-align: center;
             margin-bottom: 2rem;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            color: #1e293b;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+
+        .card {
+            background: var(--card-gradient);
+            border: none;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.15);
+        }
+
         .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid rgba(0,0,0,.125);
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1.25rem 1.5rem;
         }
-        .font-monospace {
-            background-color: #f8f9fa;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            margin: 0.5rem 0;
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group-text {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-right: none;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-info {
+            background: #0ea5e9;
+            border: none;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #0284c7;
+            color: white;
+        }
+
+        .input-group .btn {
+            border-radius: 0 0.75rem 0.75rem 0;
+        }
+
+        /* 动画类 */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* 提示工具提示 */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1rem;
+            background: #1e293b;
+            color: white;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        [data-tooltip]:hover:before {
+            opacity: 1;
+            visibility: visible;
+            bottom: calc(100% + 10px);
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="container">
-        <div class="card">
-            <h5 class="card-header">解决纯IPv6的VPS运行GitHub脚本时访问GitHub不通的问题</h5>
+        <h1 class="page-title animate-fade-in">GitHub Proxy 转换工具</h1>
+        
+        <div class="card animate-slide-up">
+            <h5 class="card-header">转换 Github 一键脚本命令</h5>
             <div class="card-body">
-                <p>本Github Proxy项目可处理形如下列的Github一键脚本命令:</p>
-                <p class="font-monospace">bash <(curl -L https://github.com/crazypeace/warp.sh/raw/main/warp.sh) 4</p>
-                <p class="font-monospace">bash <(wget -qO- -o- https://git.io/v2ray.sh)</p>
-                <p class="font-monospace">wget -O tcpx.sh "https://git.io/JYxKU" && chmod +x tcpx.sh && ./tcpx.sh</p>
-                <p class="font-monospace">wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/hysteria-install/main/hy2/hysteria.sh && bash hysteria.sh</p>
-            </div>
-            <div class="card-footer">
-                <a href="https://github.com/crazypeace/gh-proxy/" target="_self">Fork me on GitHub</a>
+                <label class="form-label">输入你原本的 GitHub 脚本命令:</label>
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" id="githubScript" 
+                           placeholder="例如 bash <(curl -L https://github.com/user/repo/raw/main/script.sh)" />
+                </div>
+                <div class="d-grid gap-2 mb-4">
+                    <button class="btn btn-primary" type="button" onclick="convertScript()" id="cvtBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat me-2" viewBox="0 0 16 16">
+                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                        </svg>
+                        转换脚本
+                    </button>
+                </div>
+                <p class="text-muted mb-3">以下为转换后的一键脚本命令，请在命令行中执行</p>
+                <label class="form-label" data-tooltip="仅转换脚本中直接引用的 GitHub 资源">只处理一层脚本中 GitHub 资源</label>
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" id="result2" onfocus="this.select()" />
+                    <button class="btn btn-info" type="button" onclick="copyResult2()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard me-1" viewBox="0 0 16 16">
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                        复制
+                    </button>
+                </div>
+                <label class="form-label" data-tooltip="同时转换脚本中引用的其他 GitHub 脚本">处理 GitHub 脚本里面嵌套调用了其它 GitHub 脚本</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="result1" onfocus="this.select()" />
+                    <button class="btn btn-info" type="button" onclick="copyResult1()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard me-1" viewBox="0 0 16 16">
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                        复制
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <h5 class="card-header">转换Github一键脚本命令</h5>
+        <div class="card animate-slide-up" style="animation-delay: 0.2s">
+            <h5 class="card-header">简单转换 Github 网址</h5>
             <div class="card-body">
-                <label class="form-label">输入你原本的GitHub脚本命令:</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="githubScript" aria-describedby="basic-addon1" placeholder="例如 bash <(curl -L https://github.com/crazypeace/warp.sh/raw/main/warp.sh) 4" />
+                <label class="form-label">输入 GitHub 资源链接</label>
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" id="githubRes" 
+                           placeholder="例如 https://github.com/user/repo/raw/main/file.txt" />
                 </div>
-                <div class="d-grid gap-2 mb-3">
-                    <button class="btn btn-primary" type="button" onclick="convertScript()" id="cvtBtn">转换脚本</button>
-                </div>
-                <p>以下为转换后的一键脚本命令, 请在命令行中执行</p>
-                <label class="form-label">只处理一层脚本中GitHub资源</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="result2" aria-describedby="basic-addon2" onfocus="this.select()" />
-                    <button class="btn btn-info" type="button" onclick="copyResult2()">复制</button>
-                </div>
-                <label class="form-label">处理GitHub脚本里面嵌套调用了其它GitHub脚本</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="result1" aria-describedby="basic-addon2" onfocus="this.select()" />
-                    <button class="btn btn-info" type="button" onclick="copyResult1()">复制</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h5 class="card-header">简单转换Github网址</h5>
-            <div class="card-body">
-                <label class="form-label">输入GitHub资源链接</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="githubRes" aria-describedby="basic-addon1" placeholder="例如 https://github.com/crazypeace/warp.sh/raw/main/warp.sh" />
-                </div>
-                <div class="d-grid gap-2 mb-3">
-                    <button class="btn btn-primary" type="button" onclick="convertRes()" id="cvtBtn">转换资源</button>
+                <div class="d-grid gap-2 mb-4">
+                    <button class="btn btn-primary" type="button" onclick="convertRes()" id="cvtBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link-45deg me-2" viewBox="0 0 16 16">
+                            <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
+                            <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
+                        </svg>
+                        转换资源
+                    </button>
                 </div>
                 <label class="form-label">以下为转换后的链接</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="resAfterGhproxy" aria-describedby="basic-addon2" onfocus="this.select()" />
-                    <button class="btn btn-info" type="button" onclick="fetchRes()">获取</button>
+                    <input type="text" class="form-control" id="resAfterGhproxy" onfocus="this.select()" />
+                    <button class="btn btn-info" type="button" onclick="fetchRes()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-1" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        获取
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card animate-slide-up" style="animation-delay: 0.4s">
             <h5 class="card-header">高级参数</h5>
             <div class="card-body">
                 <div class="input-group">
                     <span class="input-group-text">Github Proxy</span>
-                    <input type="text" class="form-control" id="ghproxy" aria-describedby="basic-addon3" value="https://ghproxy.crazypeace.workers.dev/" />
-                    <button class="btn btn-info" type="button" onclick="getLocalUrl()" id="localUrlBtn">使用本页</button>
+                    <input type="text" class="form-control" id="ghproxy" value="https://ghproxy.crazypeace.workers.dev/" />
+                    <button class="btn btn-info" type="button" onclick="getLocalUrl()" id="localUrlBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear me-1" viewBox="0 0 16 16">
+                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
+                        </svg>
+                        使用本页
+                    </button>
                 </div>
             </div>
         </div>
