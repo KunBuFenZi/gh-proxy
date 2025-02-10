@@ -180,6 +180,69 @@
     <div class="container">
         <h1 class="page-title animate-fade-in">GitHub Proxy 转换工具</h1>
         
+        <div class="card animate-slide-up" style="animation-delay: 0s">
+            <h5 class="card-header">常用项目</h5>
+            <div class="card-body">
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <div class="d-flex flex-column">
+                            <h6 class="mb-2">NekoBoxForAndroid</h6>
+                            <code class="copy-link" style="cursor: pointer; word-break: break-all;" onclick="navigator.clipboard.writeText(this.innerText)">
+                                https://github.com/MatsuriDayo/NekoBoxForAndroid/releases/latest/download/NB4A-latest-arm64-v8a.apk
+                            </code>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="d-flex flex-column">
+                            <h6 class="mb-2">clash-verge-rev</h6>
+                            <code class="copy-link" style="cursor: pointer; word-break: break-all;" onclick="navigator.clipboard.writeText(this.innerText)">
+                                https://github.com/clash-verge-rev/clash-verge-rev/releases/latest/download/Clash.Verge_latest_x64-setup.exe
+                            </code>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="d-flex flex-column">
+                            <h6 class="mb-2">SSH_TOOL</h6>
+                            <code class="copy-link" style="cursor: pointer; word-break: break-all;" onclick="navigator.clipboard.writeText(this.innerText)">
+                                bash <(wget -qO- -o- https://raw.githubusercontent.com/eooce/ssh_tool/main/ssh_tool.sh)
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .copy-link {
+                    background-color: #f8f9fa;
+                    padding: 0.5rem;
+                    border-radius: 0.25rem;
+                    font-size: 0.875rem;
+                    color: #0d6efd;
+                    transition: background-color 0.2s ease;
+                }
+                .copy-link:hover {
+                    background-color: #e9ecef;
+                }
+                .copy-link:active {
+                    background-color: #dee2e6;
+                }
+            </style>
+            <script>
+                document.querySelectorAll('.copy-link').forEach(link => {
+                    link.addEventListener('click', function() {
+                        const text = this.innerText.trim();
+                        navigator.clipboard.writeText(text).then(() => {
+                            const originalBg = this.style.backgroundColor;
+                            this.style.backgroundColor = '#d1e7dd';
+                            setTimeout(() => {
+                                this.style.backgroundColor = originalBg;
+                            }, 500);
+                        });
+                    });
+                });
+            </script>
+        </div>
+        </div>
+        
         <div class="card animate-slide-up">
             <h5 class="card-header">转换 Github 一键脚本命令</h5>
             <div class="card-body">
